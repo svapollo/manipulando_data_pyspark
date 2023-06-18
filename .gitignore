@@ -177,3 +177,6 @@ pyrightconfig.json
 
 # Execução bd docker
 db/
+
+#config flake8
+.flake8
