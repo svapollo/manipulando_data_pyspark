@@ -61,3 +61,57 @@ df_arquivo_data_final = df_arquivo_data_cast_date_int\
 
 df_arquivo_data_final.show()
 df_arquivo_data_final.printSchema()
+#####################################################################
+# aplicar calculo no arquivo de origem
+#####################################################################
+
+
+def calcula_mes_entre_int_e_today(df_data_inicio_int):
+    try:
+        data_atual = current_date()
+        print(data_atual)
+
+        df_data_inicio_int.show()
+        df_data_inicio_int.printSchema()
+
+        # não é necessário formatar, convertendo para data já sai yyyy-MM-dd
+        # df_data_inicio_int_date = df_data_inicio_int.withColumn('release_date_cast',
+        #                                                        date_format(to_date(df_data_inicio_int.release_date,
+        #                                                                'yyyyMMdd'), 'yyyy-MM-dd'))
+
+        df_data_inicio_int_date = df_data_inicio_int.withColumn('release_date_cast',
+                                                                to_date(df_data_inicio_int.release_date, 'yyyyMMdd'))
+
+        print('-----depois do cast para datetype')
+        df_data_inicio_int_date.show()
+        df_data_inicio_int_date.printSchema()
+        '''
+        df_data_inicio_string = df_data_inicio_int_date.withColumn('release_date_string',
+                                                                   col('release_date_cast')
+                                                                   .cast(StringType()))
+
+        print('-----depois do cast para stringtype separado por -')
+        df_data_inicio_string.show()
+        df_data_inicio_string.printSchema()
+        '''
+        print('-----calculando diferença entre meses')
+        # codigo abaixo retorna um double
+        # df_arquivo_calculado_double = df_data_inicio_int_date.withColumn('dif_meses_double', months_between(data_atual, col('release_date_cast')))
+        # df_arquivo_calculado_int = df_arquivo_calculado_double.withColumn('dif_meses',
+        #                                                                  col('dif_meses_double')
+        #                                                                  .cast(IntegerType()))
+
+        df_arquivo_calculado_double = df_data_inicio_int_date.withColumn('dif_meses_double_cast_int', months_between(data_atual, col('release_date_cast')).cast(IntegerType()))
+        df_arquivo_calculado_int = df_arquivo_calculado_double.withColumn('dif_meses',
+                                                                          col('dif_meses_double_cast_int')
+                                                                          .cast(IntegerType()))
+
+        return df_arquivo_calculado_int
+    except Exception as e:
+        print(e)
+
+
+df_arquivo_calculado_int = calcula_mes_entre_int_e_today(df_arquivo_data_final)
+
+df_arquivo_calculado_int.show()
+df_arquivo_calculado_int.printSchema()
