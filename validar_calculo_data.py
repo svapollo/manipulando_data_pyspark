@@ -29,3 +29,35 @@ df_calculado_bd = spark.read \
 # show DataFrame
 df_calculado_bd.show()
 
+#####################################################################
+# ler arquivo csv e analisa transformações para o campo data
+#####################################################################
+
+df_arquivo_data = spark.read\
+                .format("csv")\
+                .option("sep", ";")\
+                .option("header", "true")\
+                .option("inferSchema", "true")\
+                .load("dados_origem/disney_movies_excel.csv")
+df_arquivo_data.show()
+df_arquivo_data.printSchema()
+df_arquivo_data_cast_date = df_arquivo_data\
+                            .withColumn('cast_release_date',
+                                        date_format(to_date(df_arquivo_data.release_date,
+                                                            'dd/MM/yyyy'), 'yyyyMMdd'))
+df_arquivo_data_cast_date.show()
+df_arquivo_data_cast_date.printSchema()
+
+df_arquivo_data_cast_date_int = df_arquivo_data_cast_date\
+                                .withColumn('cast_int_cast_release_date',
+                                            col('cast_release_date')
+                                            .cast(IntegerType()))
+df_arquivo_data_cast_date_int.show()
+df_arquivo_data_cast_date_int.printSchema()
+
+df_arquivo_data_final = df_arquivo_data_cast_date_int\
+                        .withColumn('release_date',
+                                    col('cast_int_cast_release_date'))
+
+df_arquivo_data_final.show()
+df_arquivo_data_final.printSchema()
