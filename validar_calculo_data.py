@@ -128,3 +128,6 @@ df_inconsistencia = df_arquivo_calculado_int.join(df_calculado_bd,
 
 
 df_inconsistencia.show()
+df_parquet_inconsistencia = df_inconsistencia.select('id', 'movie_title', col('dif_meses').alias('num_launch_days'), 'genre', 'mpaa_rating', 'total_gross', 'inflation_adjusted_gross')
+df_parquet_inconsistencia.show()
+df_parquet_inconsistencia.write.parquet('dados_calculado/incosistencia.parquet')
