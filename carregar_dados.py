@@ -34,6 +34,7 @@ for i in range(len(lista_caminho_dados)):
     lista_df[i] = spark.read\
                 .format(lista_formato_origem[i])\
                 .option("header", "true")\
+                .option("sep", ";")\
                 .option("inferSchema", "true")\
                 .option("multiline", "true")\
                 .load(lista_caminho_dados[i])
