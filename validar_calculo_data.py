@@ -115,3 +115,16 @@ df_arquivo_calculado_int = calcula_mes_entre_int_e_today(df_arquivo_data_final)
 
 df_arquivo_calculado_int.show()
 df_arquivo_calculado_int.printSchema()
+
+# df_arquivo_calculado_int.write.csv('dados_calculado/final_calculado.csv')
+#####################################################################
+# validar se valores inseridos na tabela foram calculados corretamente
+#####################################################################
+
+condicao = [((df_arquivo_calculado_int.id == df_calculado_bd.id) & (df_arquivo_calculado_int.dif_meses_double_cast_int != df_calculado_bd.num_launch_days))]
+
+df_inconsistencia = df_arquivo_calculado_int.join(df_calculado_bd,
+                                                  on=condicao, how='left_semi')
+
+
+df_inconsistencia.show()
